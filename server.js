@@ -16,6 +16,13 @@ exports.start = function() {
     log: log
   });
 
+  server.use(proxy({
+    rules: [ {
+      match: /^\/api\/request(.*)$/,
+      target: helloWorldApiUrl
+    } ]
+  }));
+
   server.use(restify.acceptParser(server.acceptable));
   server.use(restify.queryParser());
   server.use(restify.bodyParser());
@@ -31,17 +38,17 @@ exports.start = function() {
     return next();
   });
 
-  server.get('/api/request', proxy.to(helloWorldApiUrl));
+  server.get('/api/request', function(req,res,next) {});
 
   server.post('/signup', user.signUp);
   server.post('/authenticate', user.authenticate);
   server.get('/me', jwt({secret: tokenConfig.jwt_secret}), user.me);
 
-  server.get('/api/bookmark', jwt({secret: tokenConfig.jwt_secret}), proxy.to(bookmarkApiUrl));
-  server.post('/api/bookmark', jwt({secret: tokenConfig.jwt_secret}), proxy.to(bookmarkApiUrl));
-  server.get('/api/bookmark/:id', jwt({secret: tokenConfig.jwt_secret}), proxy.to(bookmarkApiUrl));
-  server.put('/api/bookmark/:id', jwt({secret: tokenConfig.jwt_secret}), proxy.to(bookmarkApiUrl));
-  server.del('/api/bookmark/:id', jwt({secret: tokenConfig.jwt_secret}), proxy.to(bookmarkApiUrl));
+  server.get('/api/bookmark', jwt({secret: tokenConfig.jwt_secret}), function(req,res,next) {});
+  server.post('/api/bookmark', jwt({secret: tokenConfig.jwt_secret}), function(req,res,next) {});
+  server.get('/api/bookmark/:id', jwt({secret: tokenConfig.jwt_secret}), function(req,res,next) {});
+  server.put('/api/bookmark/:id', jwt({secret: tokenConfig.jwt_secret}), function(req,res,next) {});
+  server.del('/api/bookmark/:id', jwt({secret: tokenConfig.jwt_secret}), function(req,res,next) {});
 
   server.listen(appConfig.port, function () {
     log.info('%s listening at %s', server.name, server.url);
