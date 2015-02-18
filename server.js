@@ -7,7 +7,8 @@ exports.start = function() {
   var jwt = require('restify-jwt');
   var proxy = require('./lib/proxy');
 
-  var bookmarkApiUrl = 'http://localhost:8081';
+  var bookmarkApiUrl = 'http://localhost:8088';
+  var helloWorldApiUrl = 'http://localhost:1337';
 
   var server = restify.createServer({
     name: appConfig.name,
@@ -29,6 +30,8 @@ exports.start = function() {
     req.log.info({req: req}, 'START');
     return next();
   });
+
+  server.get('/api/request', proxy.to(helloWorldApiUrl));
 
   server.post('/signup', user.signUp);
   server.post('/authenticate', user.authenticate);
